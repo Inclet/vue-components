@@ -6,11 +6,11 @@ export default {
       layoutMobile: "2x1",
       enableHoverCTA: false,
       enableHoverWithArrowIcon: false,
-      positioningDesktop: "alignLeft alignCenter",
+      positioningDesktop: "alignLeft alignBottom",
       positioningMobile: "alignLeft alignTop",
       frontSide: {
         title: {
-          title: "Lorem Ipsum Dolor sit amet",
+          title: "Lorem Ipsum Dolor sit am",
           titleBackgroundColorDesktop: "#000",
           titleBackgroundColorTablet: " #000",
           titleBackgroundColorMobile: "#000",
@@ -35,7 +35,7 @@ export default {
         cta1: {
           type: "categoryPicker",
           url: "",
-          label: "CTA 1",
+          label: "CTA1",
           colorFontDesktop: "#000",
           colorFontTablet: "#000",
           colorFontMobile: "#000",
@@ -50,7 +50,7 @@ export default {
         },
         mediaType: {
           image: {
-            imageDesktop: "more_img.png",
+            imageDesktop: "shoe_img.png",
             imageTablet: "/clientlib-resources/images/product-img-2x2.jpg",
             imageMobile: "/clientlib-resources/images/product-img-2x2.jpg",
             altTextImage: "alt editorial",
@@ -93,24 +93,31 @@ export default {
         backgroundColorMobileBackSide: "#4E555A",
         cta1: {
           url: "",
-          label: "CTA 1",
+          label: "CTA MAIN",
           colorFontDesktop: "#fff",
           colorFontTablet: "#fff",
           colorFontMobile: "#fff",
         },
         cta2: {
           url: "",
-          label: "CTA 2",
+          label: "CTA MAIN",
           colorFontDesktop: "#fff",
           colorFontTablet: "#fff",
           colorFontMobile: "#fff",
         },
       },
+      isShowBackside: false,
+      isHover: false,
     };
   },
   computed: {
     getDescriptionPosition() {
-      switch (this.positioningDesktop) {
+      // Check device
+      const positionDevice = this.isMobile()
+        ? this.positioningMobile
+        : this.positioningDesktop;
+
+      switch (positionDevice) {
         case "alignLeft alignTop":
           return {
             top: "20px",
@@ -168,6 +175,31 @@ export default {
           };
       }
     },
+    // getTitleColor() {
+    //   let color = "";
+    //   switch (document.getScreen) {
+    //     case "Mobile":
+    //       color = this.frontSide.title.titleBackgroundColorMobile;
+    //       break;
+    //     default:
+    //       color = "#000";
+    //       break;
+    //   }
+    //   return {
+    //     color,
+    //   };
+    // },
+  },
+  methods: {
+    handleShowBackside() {
+      this.isShowBackside = !this.isShowBackside;
+    },
+    isMobile(): boolean {
+      return window.matchMedia("(max-width: 767px)").matches;
+    },
+    getValue() {
+      return this.isMobile() ? "16px" : "20px";
+    },
   },
 };
 </script>
@@ -192,8 +224,23 @@ export default {
       }"
       class="text-2xl"
     >
-      {{ frontSide.title.title }}
-      <div class="w-1/2 mt-4 text-sm">
+      <div class="flex cursor-pointer">
+        <img src="/assets/icons/left-arrow.svg" v-if="isHover" class="pr-3" />
+        <div
+          class="text-2xl font-bold"
+          @mouseover="isHover = true"
+          @mouseleave="isHover = false"
+        >
+          {{ frontSide.title.title }}
+        </div>
+      </div>
+      <div
+        class="w-1/2 mt-4 text-sm description-test"
+        :style="{
+          '--description-color': `${frontSide.title.titleBackgroundColorDesktop}`,
+          '--description-mobile-color': `${frontSide.title.titleBackgroundColorDesktop}`,
+        }"
+      >
         {{ frontSide.description.description }}
       </div>
       <div class="flex flex-row gap-6 mt-5">
@@ -204,8 +251,36 @@ export default {
           {{ frontSide.cta2.label }}
         </div>
       </div>
+      <img
+        src="/assets/icons/Union.svg"
+        color="#000000"
+        class="absolute bottom-0 right-8 cursor-pointer"
+        @click="handleShowBackside"
+      />
     </div>
-    <img src="/assets/icons/Union.svg" />
+    <div
+      v-if="isShowBackside"
+      class="absolute top-0 left-0 bg-black text-white p-5 h-full w-full"
+    >
+      <div class="text-2xl font-bold">{{ backSide.title.title }}</div>
+      <div class="w-1/2 mt-4 text-sm font-normal">
+        {{ backSide.description.description }}
+      </div>
+      <div class="flex flex-row gap-6 mt-5">
+        <div class="text-sm font-medium underline">
+          {{ backSide.cta1.label }}
+        </div>
+        <div class="text-sm font-medium underline">
+          {{ backSide.cta2.label }}
+        </div>
+      </div>
+      <div
+        class="absolute bottom-5 right-6 cursor-pointer p-2"
+        @click="handleShowBackside"
+      >
+        <img src="/assets/icons/remove.svg" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -218,5 +293,16 @@ export default {
 }
 .description {
   position: absolute;
+}
+
+.description-test {
+  color: var(--description-color);
+}
+
+/* smartphones, iPhone, portrait 480x320 phones */
+@media only screen and (min-device-width: 320px) and (max-device-width: 768px) {
+  .description-test {
+  color: var(--description-color);
+}
 }
 </style>

@@ -3,7 +3,7 @@ import EditorialComponentVue from "./components/EditorialComponent.vue";
 </script>
 
 <template>
-  <EditorialComponentVue />
+  <EditorialComponentVue card-data="" />
 </template>
 
 <style scoped>
